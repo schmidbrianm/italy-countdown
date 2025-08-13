@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brian's Big Italy Adventure — Days Countdown</title>
+    <meta name="description" content="Simple, single‑file web app that counts down the days until Brian's Big Italy Adventure on October 31, 2025." />
+    <style>
+      :root {
+        --bg: #0b0f14;
+        --card: #111827;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #60a5fa;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body {
+        margin: 0; display: grid; place-items: center; min-height: 100%;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(1200px 800px at 80% 10%, #0f172a 0%, var(--bg) 40%, #0b0f14 100%);
+        color: var(--text);
+      }
+      .card {
+        width: min(720px, 92vw);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 20px; padding: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        backdrop-filter: blur(6px);
+      }
+      h1 { font-size: clamp(24px, 4.2vw, 36px); margin: 0 0 6px 0; letter-spacing: 0.2px; }
+      .sub { color: var(--muted); margin: 0 0 22px 0; font-size: 14px; }
+      .days { font-size: clamp(56px, 12vw, 120px); font-weight: 800; line-height: 1; letter-spacing: -2px; }
+      .unit { display:block; font-size: clamp(14px, 2.5vw, 18px); color: var(--muted); margin-top: 6px; }
+      .ticker { margin-top: 18px; font-variant-numeric: tabular-nums; font-size: clamp(14px, 2.8vw, 18px); color: var(--muted); }
+      .footer { margin-top: 26px; font-size: 13px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      code { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 6px; }
+      button.copy {
+        margin-left: auto; cursor: pointer; border: 1px solid rgba(255,255,255,0.14);
+        background: transparent; color: var(--text); padding: 8px 12px; border-radius: 10px; font-weight: 600;
+      }
+      .tag { display:inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(96,165,250,0.12); color: var(--accent); border: 1px solid rgba(96,165,250,0.25); font-size: 12px; font-weight: 700; letter-spacing: .3px; }
+    </style>
+  </head>
+  <body>
+    <main class="card" role="main" aria-live="polite">
+      <div class="tag" aria-hidden="true">Italy Adventure</div>
+      <h1>Days until Brian's Big Italy Adventure</h1>
+      <p class="sub">Trip start: <strong>October 31, 2025</strong> (local time)</p>
+
+      <div class="days" id="days">—</div>
+      <span class="unit" id="label">days remaining</span>
+
+      <div class="ticker" id="ticker" aria-hidden="true"></div>
+
+      <div class="footer">
+        <span id="status"></span>
+        <button class="copy" id="copyBtn" type="button" title="Copy shareable URL">Copy URL</button>
+      </div>
+    </main>
+
+    <script>
+      (function() {
+        // Target start date in the user's local timezone at 00:00
+        const target = new Date(2025, 9, 31); // months are 0-indexed; Oct = 9
+
+        // Returns midnight for the provided date in local time
+        function midnightLocal(d){
+          return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        }
+
+        function fmt(n){ return new Intl.NumberFormat(navigator.language).format(n); }
+
+        function update(){
+          const now = new Date();
+          const todayMid = midnightLocal(now);
+          const targetMid = midnightLocal(target);
+
+          const msPerDay = 24*60*60*1000;
+          const raw = (targetMid - todayMid) / msPerDay;
+          let daysRemaining = Math.max(0, Math.ceil(raw)); // ceiling so partial days count toward the trip
+
+          const status = document.getElementById('status');
+          const label = document.getElementById('label');
+
+          if (raw > 0) {
+            document.getElementById('days').textContent = fmt(daysRemaining);
+            label.textContent = daysRemaining === 1 ? 'day remaining' : 'days remaining';
+            const msLeftToday = target - now;
+            // Live HH:MM:SS ticker to trip start (uses actual moment at 00:00 local on 10/31/2025)
+            if (msLeftToday > 0) {
+              const sec = Math.floor(msLeftToday / 1000) % 60;
+              const min = Math.floor(msLeftToday / (1000*60)) % 60;
+              const hrs = Math.floor(msLeftToday / (1000*60*60)) % 24;
+              const daysExact = Math.floor(msLeftToday / msPerDay);
+              document.getElementById('ticker').textContent =
+                `Also: ${daysExact}d ${String(hrs).padStart(2,'0')}:${String(min).padStart(2,'0')}:${String(sec).padStart(2,'0')} to go`;
+              status.textContent = 'Counting down…';
+            } else {
+              document.getElementById('ticker').textContent = '';
+              status.textContent = '';
+            }
+          } else if (raw === 0) {
+            document.getElementById('days').textContent = '0';
+            label.textContent = 'days remaining';
+            document.getElementById('ticker').textContent = 'It begins today. Buon viaggio!';
+            status.textContent = 'Go time.';
+          } else {
+            const daysSince = Math.abs(Math.floor(raw));
+            document.getElementById('days').textContent = fmt(daysSince);
+            label.textContent = daysSince === 1 ? 'day since start' : 'days since start';
+            document.getElementById('ticker').textContent = '';
+            status.textContent = 'Trip already started.';
+          }
+        }
+
+        update();
+        // Update every second for the live ticker and midnight rollovers
+        setInterval(update, 1000);
+
+        // Copy URL helper (works even if hosted from file:// or any static host)
+        document.getElementById('copyBtn').addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const btn = document.getElementById('copyBtn');
+            const prev = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => btn.textContent = prev, 1200);
+          } catch (e) {
+            alert('Copy failed. You can manually copy the address bar URL.');
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
