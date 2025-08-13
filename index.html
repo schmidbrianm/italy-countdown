@@ -7,14 +7,13 @@
     <meta name="description" content="Simple, single‑file web app that counts down the days until Brian's Big Italy Adventure on October 31, 2025." />
     <style>
       :root {
-        /* Inverta-inspired palette: deep navy background, slate text, bold yellow accent */
-        --bg: #0b1220;         /* deep navy */
-        --bg2: #0e1626;        /* secondary navy */
-        --card: #0f1b2d;       /* card surface */
-        --text: #f8fafc;       /* near-white */
-        --muted: #94a3b8;      /* slate */
-        --accent: #ffd84d;     /* punchy yellow */
-        --accent-2: #ffb703;   /* warm amber */
+        --bg: #0b1220;
+        --bg2: #0e1626;
+        --card: #0f1b2d;
+        --text: #f8fafc;
+        --muted: #94a3b8;
+        --accent: #ffd84d;
+        --accent-2: #ffb703;
       }
       * { box-sizing: border-box; }
       html, body { height: 100%; }
@@ -25,7 +24,6 @@
         background: radial-gradient(1000px 700px at 80% 8%, var(--bg2) 0%, var(--bg) 45%, #070b13 100%);
         overflow: hidden;
       }
-      /* Decorative grid inspired by Inverta's energetic lines */
       .grid::before {
         content: ""; position: fixed; inset: -50%; background:
           linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px) 0 0 / 56px 56px,
@@ -33,13 +31,10 @@
         mask-image: radial-gradient(closest-side, black, transparent);
         pointer-events: none; z-index: 0;
       }
-      .accent-bursts {
-        position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      }
+      .accent-bursts { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
       .burst { position: absolute; width: 560px; height: 560px; border-radius: 50%; filter: blur(48px); opacity: .18; }
       .burst.yellow { background: radial-gradient(circle, var(--accent) 0%, transparent 60%); top: -120px; right: -120px; }
       .burst.amber { background: radial-gradient(circle, var(--accent-2) 0%, transparent 60%); bottom: -140px; left: -100px; }
-
       .card {
         position: relative; z-index: 1;
         width: min(760px, 92vw);
@@ -47,13 +42,6 @@
         border: 1px solid rgba(255,255,255,0.1);
         border-radius: 24px; padding: 32px; box-shadow: 0 12px 36px rgba(0,0,0,0.45);
         backdrop-filter: blur(6px);
-      }
-      .brand-bar {
-        display: inline-flex; align-items: center; gap: 10px; margin-bottom: 12px;
-        background: rgba(255, 216, 77, 0.12); border: 1px solid rgba(255, 216, 77, 0.35); color: #1f2937;
-        color: var(--accent);
-        padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: .35px;
-        text-transform: uppercase;
       }
       h1 { font-size: clamp(24px, 4.2vw, 40px); margin: 0 0 6px 0; letter-spacing: 0.2px; }
       .sub { color: var(--muted); margin: 0 0 22px 0; font-size: 14px; }
@@ -67,69 +55,49 @@
         background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); color: var(--text); padding: 10px 14px; border-radius: 12px; font-weight: 700;
       }
       button.copy:hover { border-color: rgba(255,216,77,0.8); box-shadow: 0 0 0 3px rgba(255,216,77,0.18) inset; }
-
-      /* Watermark of Italy outline */
-      .italy {
-        position: fixed; right: 6vw; top: 12vh; width: min(24vw, 260px); opacity: .06; z-index: 0; filter: drop-shadow(0 0 1px rgba(0,0,0,0.3));
-      }
+      .italy-map { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; opacity: .08; pointer-events: none; }
+      .italy-map path { fill: var(--accent); fill-opacity: 0.15; stroke: var(--accent); stroke-opacity: 0.5; stroke-width: 2; vector-effect: non-scaling-stroke; }
+      .florence-pin { fill: red; stroke: white; stroke-width: 1; }
     </style>
   </head>
   <body>
     <main class="card grid" role="main" aria-live="polite">
-      <div class="brand-bar" aria-hidden="true">Inverta‑inspired</div>
       <h1>Days until Brian's Big Italy Adventure</h1>
       <p class="sub">Trip start: <strong>October 31, 2025</strong> (local time)</p>
-
       <div class="days" id="days">—</div>
       <span class="unit" id="label">days remaining</span>
-
       <div class="ticker" id="ticker" aria-hidden="true"></div>
-
       <div class="footer">
         <span id="status"></span>
         <button class="copy" id="copyBtn" type="button" title="Copy shareable URL">Copy URL</button>
       </div>
-
-      <!-- Ambient accents -->
-      <svg class="italy" viewBox="0 0 512 512" aria-hidden="true">
-        <path d="M393 59c-21 7-38 18-49 32-9 12-14 25-16 39 10 8 20 16 31 24-7 10-15 20-24 30-12-11-23-22-34-33-17 12-31 25-42 39-13 16-21 33-24 51 19 8 39 15 60 21-6 13-13 26-22 39-17-6-33-13-48-21-1 21 3 41 12 60-15 10-32 19-51 26-8-17-12-35-12-55-21 9-42 14-64 16 0-17 5-34 15-52 18-31 48-56 90-76-3-13-2-26 2-39 7-22 23-41 47-58 25-17 56-28 93-33 13-2 25-1 35 2zM454 372c-11 16-26 31-46 45-28 19-62 33-102 41-7-12-13-25-18-38 30-7 56-18 79-33 19-13 34-27 45-43 14 8 28 17 42 28z" fill="currentColor" />
+      <svg class="italy-map" viewBox="0 0 512 512" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path d="M393 59c-21 7-38 18-49 32-9 12-14 25-16 39 10 8 20 16 31 24-7 10-15 20-24 30-12-11-23-22-34-33-17 12-31 25-42 39-13 16-21 33-24 51 19 8 39 15 60 21-6 13-13 26-22 39-17-6-33-13-48-21-1 21 3 41 12 60-15 10-32 19-51 26-8-17-12-35-12-55-21 9-42 14-64 16 0-17 5-34 15-52 18-31 48-56 90-76-3-13-2-26 2-39 7-22 23-41 47-58 25-17 56-28 93-33 13-2 25-1 35 2zM454 372c-11 16-26 31-46 45-28 19-62 33-102 41-7-12-13-25-18-38 30-7 56-18 79-33 19-13 34-27 45-43 14 8 28 17 42 28z" />
+        <circle class="florence-pin" cx="350" cy="150" r="6" />
       </svg>
-
       <div class="accent-bursts" aria-hidden="true">
         <div class="burst yellow"></div>
         <div class="burst amber"></div>
       </div>
     </main>
-
     <script>
       (function() {
-        // Target start date in the user's local timezone at 00:00
-        const target = new Date(2025, 9, 31); // months are 0-indexed; Oct = 9
-
-        // Returns midnight for the provided date in local time
-        function midnightLocal(d){
-          return new Date(d.getFullYear(), d.getMonth(), d.getDate());
-        }
-
+        const target = new Date(2025, 9, 31);
+        function midnightLocal(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
         function fmt(n){ return new Intl.NumberFormat(navigator.language).format(n); }
-
         function update(){
           const now = new Date();
           const todayMid = midnightLocal(now);
           const targetMid = midnightLocal(target);
-
           const msPerDay = 24*60*60*1000;
           const raw = (targetMid - todayMid) / msPerDay;
-          let daysRemaining = Math.max(0, Math.ceil(raw)); // ceiling so partial days count toward the trip
-
+          let daysRemaining = Math.max(0, Math.ceil(raw));
           const status = document.getElementById('status');
           const label = document.getElementById('label');
-
           if (raw > 0) {
             document.getElementById('days').textContent = fmt(daysRemaining);
             label.textContent = daysRemaining === 1 ? 'day remaining' : 'days remaining';
             const msLeftToday = target - now;
-            // Live HH:MM:SS ticker to trip start (uses actual moment at 00:00 local on 10/31/2025)
             if (msLeftToday > 0) {
               const sec = Math.floor(msLeftToday / 1000) % 60;
               const min = Math.floor(msLeftToday / (1000*60)) % 60;
@@ -155,12 +123,8 @@
             status.textContent = 'Trip already started.';
           }
         }
-
         update();
-        // Update every second for the live ticker and midnight rollovers
         setInterval(update, 1000);
-
-        // Copy URL helper (works even if hosted from file:// or any static host)
         document.getElementById('copyBtn').addEventListener('click', async () => {
           try {
             await navigator.clipboard.writeText(location.href);
